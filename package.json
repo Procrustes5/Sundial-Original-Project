@@ -1,0 +1,35 @@
+{
+  "name": "Sundial",
+  "scripts": {
+    "start": "npm-run-all makedir:dist filecopy:* background:build --parallel vite:dev --race electron:start",
+    "build": "run-s clean vite:build filecopy:preload background:build electron:build",
+    "build:mac": "run-s clean vite:build electron:macbuild",
+    "background:build": "rollup --config rollup.config.js",
+    "vite:dev": "vite",
+    "vite:build": "vite build",
+    "vite:serve": "vite preview",
+    "vite:prdbuild": "vite build --config vite.config.prd.js",
+    "electron:start": "set NODE_ENV=development && electron .",
+    "electron:build": "set NODE_ENV=production && electron-builder --win --x64 --dir",
+    "electron:macbuild": "set NODE_ENV=production && electron-builder --mac --dir",
+    "makedir:dist": "node -e \"require('fs').mkdirSync('./dist', { recursive: true })\"",
+    "filecopy:preload": "node -e \"require('fs').copyFileSync('./preload.js', './dist/preload.js')\"",
+    "clean": "rimraf dist"
+  },
+  "main": "dist/background.js",
+  "build": {
+    "productName": "sundial",
+    "files": [
+      "dist/**/*"
+    ]
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "typescript": "^4.8.4",
+    "vite": "^3.1.4"
+  },
+  "dependencies": {
+    "electron": "^26.2.0",
+    "phaser": "^3.55.2"
+  }
+}
