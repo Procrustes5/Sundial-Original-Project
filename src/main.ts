@@ -1,4 +1,4 @@
-import './style.css'
+import "./style.css";
 
 // const app = document.querySelector<HTMLDivElement>('#app')!
 
@@ -8,42 +8,42 @@ import './style.css'
 //   <div id="game"></div>
 // `;
 
-import 'phaser';
-import { menu } from './menu-scene';
-
+import "phaser";
+import { menu } from "./menu-scene";
 
 const GameConfig: Phaser.Types.Core.GameConfig = {
-  title: 'ExampleGame',
-  url: 'https://github.com/digitsensitive/phaser3-typescript',
-  version: '2.0',
-  width: 800,
-  height: 600,
+  title: "ExampleGame",
+  version: "2.0",
+  width: 1440,
+  height: 960,
   type: Phaser.AUTO,
-  parent: 'app',
+  parent: "app",
   // `as as Phaser.Types.Scenes.SettingsConfig[]` is required until https://github.com/photonstorm/phaser/pull/6235
   scene: [menu()] as Phaser.Types.Scenes.SettingsConfig[],
   input: {
-    keyboard: true
+    keyboard: true,
   },
   physics: {
-    default: 'arcade',
+    default: "arcade",
     arcade: {
       gravity: { y: 0 },
-      debug: false
-    }
+      debug: false,
+    },
   },
-  backgroundColor: '#300000',
   render: { pixelArt: false, antialias: true },
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     // `fullscreenTarget` must be defined for phones to not have
     // a small margin during fullscreen.
-    fullscreenTarget: 'app',
+    fullscreenTarget: "app",
     expandParent: false,
   },
 };
 
+export class GameScene extends Phaser.Scene {
+  static readonly TILE_SIZE = 48;
+}
 
 export class Game extends Phaser.Game {
   constructor(config: Phaser.Types.Core.GameConfig) {
@@ -51,7 +51,7 @@ export class Game extends Phaser.Game {
   }
 }
 
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
   // Expose `_game` to allow debugging, mute button and fullscreen button
   (window as any)._game = new Game(GameConfig);
 });
