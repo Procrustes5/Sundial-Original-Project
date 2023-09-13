@@ -10,6 +10,8 @@ import "./style.css";
 
 import "phaser";
 import { menu } from "./menu-scene";
+import { GridControls } from "./GridControls";
+import { GridPhysics } from "./GridPhysics";
 
 const GameConfig: Phaser.Types.Core.GameConfig = {
   title: "ExampleGame",
