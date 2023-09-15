@@ -14,8 +14,8 @@ import { GridControls } from "./GridControls";
 import { GridPhysics } from "./GridPhysics";
 
 const GameConfig: Phaser.Types.Core.GameConfig = {
-  title: "ExampleGame",
-  version: "2.0",
+  title: "Sundial",
+  version: "1.0",
   width: 1440,
   height: 960,
   type: Phaser.AUTO,
@@ -28,7 +28,6 @@ const GameConfig: Phaser.Types.Core.GameConfig = {
   physics: {
     default: "arcade",
     arcade: {
-      gravity: { y: 0 },
       debug: false,
     },
   },

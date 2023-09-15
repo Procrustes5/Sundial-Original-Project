@@ -2,7 +2,8 @@ import "phaser";
 import { GameScene } from './main';
 import { Player } from "./Player";
 // Standard Tile
-import map from "../assets/map.png";
+import mapTile from "../assets/map_tile.png";
+import mapJSON from "../assets/map.json";
 import char from "../assets/char.png";
 
 import { GridControls } from "./GridControls";
@@ -23,16 +24,21 @@ export function menu():
     key: menuSceneKey,
     
     preload() {
-      this.load.image("map", map);
+      this.load.image("map_tile", mapTile);
       this.load.image("player", char);
-      
+      this.load.tilemapTiledJSON("mapJSON", mapJSON);
     },
     create() {
-      const MAPWIDTH = 30 * GameScene.TILE_SIZE;
-      const MAPHEIGHT = 20 * GameScene.TILE_SIZE;
+      const firstTilemap = this.make.tilemap({ key: "mapJSON" });
+      console.log(this.cache.tilemap);
+      const tileset = firstTilemap.addTilesetImage("tiles", "map_tile", 48, 48);
+      console.log(tileset);
+      for (let i = 0; i < firstTilemap.layers.length; i++) {
+        const layer = firstTilemap.createLayer(i, tileset, 0, 0)
+        layer.setDepth(i);
+      }
 
-
-      this.add.tileSprite(MAPWIDTH / 2, MAPHEIGHT / 2, MAPWIDTH, MAPHEIGHT, "map")
+ 
       // player = this.physics.add.sprite(MAPWIDTH / 2, MAPHEIGHT / 2, "char");
       const playerSprite = this.add.sprite(0, 0, "player");
       playerSprite.setDepth(2);
