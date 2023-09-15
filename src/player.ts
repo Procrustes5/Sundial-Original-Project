@@ -1,4 +1,5 @@
 import { GameScene } from "./main";
+import { Direction } from "./Direction";
 
 export class Player {
   constructor(
@@ -21,5 +22,13 @@ export class Player {
 
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
+  }
+  
+  stopAnimation() {
+    this.sprite.anims.stop();
+  }
+
+  startAnimation(direction: Direction) {
+    this.sprite.anims.play(direction);
   }
 }

@@ -2,8 +2,8 @@
 
 async function createWindow() {
   const win = new electron.BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1920,
+    height: 1080,
     webPreferences: {
       preload: path__default["default"].join(__dirname, "preload.js"),
     },

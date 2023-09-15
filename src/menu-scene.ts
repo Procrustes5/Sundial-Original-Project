@@ -4,12 +4,12 @@ import { Player } from "./Player";
 // Standard Tile
 import mapTile from "../assets/map_tile.png";
 import mapJSON from "../assets/map.json";
-import char from "../assets/char.png";
+import char from "../assets/character.png";
 
 import { GridControls } from "./GridControls";
 import { GridPhysics } from "./GridPhysics";
+import { Direction } from "./Direction";
 
-export const menuSceneKey = "MenuScene";
 
 export function menu():
   | Phaser.Types.Scenes.SettingsConfig
@@ -25,14 +25,15 @@ export function menu():
     
     preload() {
       this.load.image("map_tile", mapTile);
-      this.load.image("player", char);
       this.load.tilemapTiledJSON("mapJSON", mapJSON);
+      this.load.spritesheet("player", char, {
+        frameWidth: 26,
+        frameHeight: 36,
+      });
     },
     create() {
       const firstTilemap = this.make.tilemap({ key: "mapJSON" });
-      console.log(this.cache.tilemap);
       const tileset = firstTilemap.addTilesetImage("tiles", "map_tile", 48, 48);
-      console.log(tileset);
       for (let i = 0; i < firstTilemap.layers.length; i++) {
         const layer = firstTilemap.createLayer(i, tileset, 0, 0)
         layer.setDepth(i);
@@ -53,6 +54,10 @@ export function menu():
         this.gridPhysics
       );
 
+      this.GameScene.createPlayerAnimation(Direction.UP, 90, 92);
+      this.GameScene.createPlayerAnimation(Direction.RIGHT, 78, 80);
+      this.GameScene.createPlayerAnimation(Direction.DOWN, 54, 56);
+      this.GameScene.createPlayerAnimation(Direction.LEFT, 66, 68);
     },
     update(_time: number, delta: number) {
       this.gridControls.update();

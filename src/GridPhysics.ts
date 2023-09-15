@@ -31,6 +31,7 @@ export class GridPhysics {
   }
 
   private startMoving(direction: Direction): void {
+    this.player.startAnimation(direction);
     this.movementDirection = direction;
   }
 
@@ -70,6 +71,7 @@ export class GridPhysics {
   }
 
   private stopMoving(): void {
+    this.player.stopAnimation();
     this.movementDirection = Direction.NONE;
   }
 
