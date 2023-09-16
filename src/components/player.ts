@@ -1,4 +1,4 @@
-import { GameScene } from "./main";
+import { GameScene } from "../scenes/GameScene";
 import { Direction } from "./Direction";
 
 export class Player {
