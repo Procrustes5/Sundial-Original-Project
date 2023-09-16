@@ -1,25 +1,25 @@
-## See this template in action
-See it live at https://ubershmekel.github.io/vite-phaser-ts-starter/
+## Introduction
+Hello, We are Sundial Games.
+We start creating 2D Top Down Game with Phaser3 / TypeScript / Vite / Electron.
 
 ## Get Started
 This is an example template. To try it out do the following:
 
 1. Clone this repo
 1. Run `npm install`
-1. Run `npm run dev`
-1. You should see a URL where your game shows up
+1. Run `npm run vite:build`
+1. Run `npm run start`
+1. You can run this project with Electron
 
 ```
 {
   "scripts": {
-    "dev": "vite", // start dev server
-    "build": "vite build", // build for production
-    "serve": "vite preview" // locally preview production build
+    "start": "npm-run-all makedir:dist filecopy:* background:build --parallel vite:dev --race electron:start", // Start project with Electron
+    "vite:build": "vite build", // build for production
   }
 }
 ```
 
-Btw the live demo gets built by the github action at `.github/workflows/main.yml`. 
 
 ## Why this tech stack
 
