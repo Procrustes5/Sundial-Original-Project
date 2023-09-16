@@ -45,17 +45,16 @@ export class GameScene extends Phaser.Scene {
       layer.setDepth(i);
     }
 
-
     // player = this.physics.add.sprite(MAPWIDTH / 2, MAPHEIGHT / 2, "char");
     const playerSprite = this.add.sprite(0, 0, "player");
     playerSprite.setDepth(2);
     playerSprite.scale = 3;
-    
+
     this.cameras.main.startFollow(playerSprite);
     this.cameras.main.roundPixels = true;
     const player = new Player(playerSprite, new Phaser.Math.Vector2(6, 6));
 
-    this.gridPhysics = new GridPhysics(player);
+    this.gridPhysics = new GridPhysics(player, firstTilemap);
     this.gridControls = new GridControls(
       this.input,
       this.gridPhysics
