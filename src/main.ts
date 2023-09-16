@@ -1,4 +1,4 @@
-import './style.css'
+import "./style.css";
 
 // const app = document.querySelector<HTMLDivElement>('#app')!
 
@@ -8,50 +8,120 @@ import './style.css'
 //   <div id="game"></div>
 // `;
 
-import 'phaser';
-import { menu } from './menu-scene';
+import "phaser";
+import { menu } from "./menu-scene";
 
+import mapTile from "../assets/map_tile.png";
+import mapJSON from "../assets/map.json";
+import char from "../assets/characters.png";
+
+import { GridControls } from "./GridControls";
+import { GridPhysics } from "./GridPhysics";
+import { Direction } from "./Direction";
+import { Player } from "./Player";
+
+export class GameScene extends Phaser.Scene {
+  constructor() {
+    super(sceneConfig);
+  }
+
+  static readonly TILE_SIZE = 48;
+  private gridControls: GridControls;
+  private gridPhysics: GridPhysics;
+
+  public preload() {
+    this.load.image("map_tile", mapTile);
+    this.load.tilemapTiledJSON("mapJSON", mapJSON);
+    this.load.spritesheet("player", char, {
+      frameWidth: 26,
+      frameHeight: 36,
+    });
+  }
+  public create() {
+    const firstTilemap = this.make.tilemap({ key: "mapJSON" });
+    const tileset = firstTilemap.addTilesetImage("tiles", "map_tile", 48, 48);
+    for (let i = 0; i < firstTilemap.layers.length; i++) {
+      const layer = firstTilemap.createLayer(i, tileset, 0, 0)
+      layer.setDepth(i);
+    }
+
+
+    // player = this.physics.add.sprite(MAPWIDTH / 2, MAPHEIGHT / 2, "char");
+    const playerSprite = this.add.sprite(0, 0, "player");
+    playerSprite.setDepth(2);
+    playerSprite.scale = 3;
+    
+    this.cameras.main.startFollow(playerSprite);
+    this.cameras.main.roundPixels = true;
+    const player = new Player(playerSprite, new Phaser.Math.Vector2(6, 6));
+
+    this.gridPhysics = new GridPhysics(player);
+    this.gridControls = new GridControls(
+      this.input,
+      this.gridPhysics
+    );
+
+    this.createPlayerAnimation(Direction.UP, 90, 92);
+    this.createPlayerAnimation(Direction.RIGHT, 78, 80);
+    this.createPlayerAnimation(Direction.DOWN, 54, 56);
+    this.createPlayerAnimation(Direction.LEFT, 66, 68);
+  }
+
+  public update(_time: number, delta: number) {
+    this.gridControls.update();
+    this.gridPhysics.update(delta);
+  }
+
+  private createPlayerAnimation(
+    name: string,
+    startFrame: number,
+    endFrame: number
+  ) {
+    this.anims.create({
+      key: name,
+      frames: this.anims.generateFrameNumbers("player", {
+        start: startFrame,
+        end: endFrame,
+      }),
+      frameRate: 10,
+      repeat: -1,
+      yoyo: true,
+    })
+  }
+}
 
 const GameConfig: Phaser.Types.Core.GameConfig = {
-  title: 'ExampleGame',
-  url: 'https://github.com/digitsensitive/phaser3-typescript',
-  version: '2.0',
-  width: 800,
-  height: 600,
+  title: "Sundial",
+  version: "1.0",
+  render: {
+    antialias: false,
+  },
   type: Phaser.AUTO,
-  parent: 'app',
-  // `as as Phaser.Types.Scenes.SettingsConfig[]` is required until https://github.com/photonstorm/phaser/pull/6235
-  scene: [menu()] as Phaser.Types.Scenes.SettingsConfig[],
-  input: {
-    keyboard: true
-  },
-  physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 0 },
-      debug: false
-    }
-  },
-  backgroundColor: '#300000',
-  render: { pixelArt: false, antialias: true },
+  scene: GameScene,
   scale: {
-    mode: Phaser.Scale.FIT,
+    width: 1440,
+    height: 960,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    // `fullscreenTarget` must be defined for phones to not have
-    // a small margin during fullscreen.
-    fullscreenTarget: 'app',
-    expandParent: false,
+  },
+  parent: "app",
+  backgroundColor: "#48C4F8",
+  // `as as Phaser.Types.Scenes.SettingsConfig[]` is required until https://github.com/photonstorm/phaser/pull/6235
+  input: {
+    keyboard: true,
   },
 };
 
 
-export class Game extends Phaser.Game {
-  constructor(config: Phaser.Types.Core.GameConfig) {
-    super(config);
-  }
-}
 
-window.addEventListener('load', () => {
+export const game = new Phaser.Game(GameConfig);
+
+const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
+  active: false,
+  visible: false,
+  key: "Game",
+};
+
+window.addEventListener("load", () => {
   // Expose `_game` to allow debugging, mute button and fullscreen button
-  (window as any)._game = new Game(GameConfig);
+  (window as any)._game = game;
 });

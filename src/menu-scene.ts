@@ -1,57 +1,67 @@
-import 'phaser';
-import particleUrl from '../assets/particle.png';
-import gaspUrl from '../assets/gasp.mp3';
+import "phaser";
+import { GameScene } from './main';
+import { Player } from "./Player";
+// Standard Tile
+import mapTile from "../assets/map_tile.png";
+import mapJSON from "../assets/map.json";
+import char from "../assets/character.png";
 
-export const menuSceneKey = 'MenuScene';
+import { GridControls } from "./GridControls";
+import { GridPhysics } from "./GridPhysics";
+import { Direction } from "./Direction";
 
-export function menu(): Phaser.Types.Scenes.SettingsConfig | Phaser.Types.Scenes.CreateSceneFromObjectConfig {
+
+export function menu():
+  | Phaser.Types.Scenes.SettingsConfig
+  | Phaser.Types.Scenes.CreateSceneFromObjectConfig {
   let startKey: Phaser.Input.Keyboard.Key;
-  let sprites: {s: Phaser.GameObjects.Image, r: number }[];
+  let sprites: { s: Phaser.GameObjects.Image; r: number }[];
+  let gridControls: GridControls;
+  let gridPhysics: GridPhysics;
 
+  
   return {
     key: menuSceneKey,
+    
     preload() {
-      sprites = [];
-      startKey = this.input.keyboard.addKey(
-        Phaser.Input.Keyboard.KeyCodes.S,
-      );
-      startKey.isDown = false;
-      this.load.image('particle', particleUrl);
-      this.load.audio('gasp', gaspUrl);
+      this.load.image("map_tile", mapTile);
+      this.load.tilemapTiledJSON("mapJSON", mapJSON);
+      this.load.spritesheet("player", char, {
+        frameWidth: 26,
+        frameHeight: 36,
+      });
     },
     create() {
-      this.add.text(0, 0, 'Press S to restart scene', {
-        fontSize: '60px',
-        fontFamily: "Helvetica",
-      });
-  
-      this.add.image(100, 100, 'particle');
-  
-      for (let i = 0; i < 300; i++) {
-          const x = Phaser.Math.Between(-64, 800);
-          const y = Phaser.Math.Between(-64, 600);
-  
-          const image = this.add.image(x, y, 'particle');
-          image.setBlendMode(Phaser.BlendModes.ADD);
-          sprites.push({ s: image, r: 2 + Math.random() * 6 });
+      const firstTilemap = this.make.tilemap({ key: "mapJSON" });
+      const tileset = firstTilemap.addTilesetImage("tiles", "map_tile", 48, 48);
+      for (let i = 0; i < firstTilemap.layers.length; i++) {
+        const layer = firstTilemap.createLayer(i, tileset, 0, 0)
+        layer.setDepth(i);
       }
+
+ 
+      // player = this.physics.add.sprite(MAPWIDTH / 2, MAPHEIGHT / 2, "char");
+      const playerSprite = this.add.sprite(0, 0, "player");
+      playerSprite.setDepth(2);
+      
+      this.cameras.main.startFollow(playerSprite);
+      this.cameras.main.roundPixels = true;
+      const player = new Player(playerSprite, new Phaser.Math.Vector2(6, 6));
+
+      this.gridPhysics = new GridPhysics(player);
+      this.gridControls = new GridControls(
+        this.input,
+        this.gridPhysics
+      );
+
+      this.GameScene.createPlayerAnimation(Direction.UP, 90, 92);
+      this.GameScene.createPlayerAnimation(Direction.RIGHT, 78, 80);
+      this.GameScene.createPlayerAnimation(Direction.DOWN, 54, 56);
+      this.GameScene.createPlayerAnimation(Direction.LEFT, 66, 68);
     },
-    update() {
-      if (startKey.isDown) {
-        this.sound.play('gasp');
-        this.scene.start(menuSceneKey);
-      }
-  
-      for (let i = 0; i < sprites.length; i++) {
-          const sprite = sprites[i].s;
-  
-          sprite.y -= sprites[i].r;
-  
-          if (sprite.y < -256)
-          {
-              sprite.y = 700;
-          }
-      }
+    update(_time: number, delta: number) {
+      this.gridControls.update();
+      this.gridPhysics.update(delta);
     },
-  }
+  };
 }
