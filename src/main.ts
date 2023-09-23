@@ -32,6 +32,13 @@ const GameConfig: Phaser.Types.Core.GameConfig = {
   input: {
     keyboard: true,
   },
+  physics: {
+		default: 'arcade',
+		arcade: {
+			gravity: { y: 0 },
+			debug: true
+		}
+	},
 };
 
 export const game = new Phaser.Game(GameConfig);

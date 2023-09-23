@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "electron": "^26.2.0",
-    "phaser": "^3.55.2"
+    "phaser": "^3.55.2",
+    "short-uuid": "^4.2.2"
   }
 }
